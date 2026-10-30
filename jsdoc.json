@@ -13,7 +13,6 @@
         "plugins/markdown"
     ],
     "opts": {
-        "template": "node_modules/docdash",
         "encoding": "utf8",
         "destination": "docs/",
         "recurse": true,
@@ -22,8 +21,5 @@
     "templates": {
         "cleverLinks": true,
         "monospaceLinks": false
-    },
-    "docdash": {
-        "collapse": false
     }
 }
