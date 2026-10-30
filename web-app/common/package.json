@@ -1,7 +1,0 @@
-{
-  "type": "module",
-  "dependencies": {
-    "computing-2-submission": "file:../..",
-    "ramda": "^0.28.0"
-  }
-}

@@ -2,11 +2,45 @@
 {
     font-family: "Press Start 2P";
     font-display: swap;
-    src: url("fonts/PressStart2P.woff2") format("woff2");
+    src: url("assets/fonts/PressStart2P.woff2") format("woff2");
+}
+
+@font-face
+{
+    font-family: "Montserrat";
+    font-display: swap;
+    font-weight: 400;
+    src: url("assets/fonts/Montserrat-Regular.woff2") format("woff2");
+}
+
+@font-face
+{
+    font-family: "Montserrat";
+    font-display: swap;
+    font-weight: 700;
+    src: url("assets/fonts/Montserrat-Bold.woff2") format("woff2");
+}
+
+@font-face
+{
+    font-family: "Source Sans Pro";
+    font-display: swap;
+    font-weight: 300;
+    src: url("assets/fonts/SourceSansPro-Light.woff2") format("woff2");
+}
+
+@font-face
+{
+    font-family: "Source Sans Pro";
+    font-display: swap;
+    font-weight: 400;
+    src: url("assets/fonts/SourceSansPro-Regular.woff2") format("woff2");
 }
 
 :root
 {
+    /* The page script sets these from the game rules and the address. */
+    --grid-rows: 4;
     --grid-cols: 4;
     --slide: 120ms;
     --pop: 160ms;
@@ -14,15 +48,16 @@
 
     --header-height: 110px;
     --sidebar-width: clamp(220px, 26vw, 340px);
-    /* The board is square: as large as fits beside the sidebar. */
-    --board-size: min(
-        100vw - var(--sidebar-width) - 48px,
-        100vh - var(--header-height) - 48px
-    );
-    --gap: calc(var(--board-size) * 0.025);
-    --cell: calc(
-        (var(--board-size) - (var(--grid-cols) + 1) * var(--gap))
-        / var(--grid-cols)
+    /* Room for the board, beside the sidebar and below the header. */
+    --avail-w: calc(100vw - var(--sidebar-width) - 48px);
+    --avail-h: calc(100vh - var(--header-height) - 48px);
+    --gap: clamp(4px, 1.4vmin, 14px);
+    /* The largest square cell that lets the whole board fit. */
+    --cell: min(
+        (var(--avail-w) - (var(--grid-cols) + 1) * var(--gap))
+        / var(--grid-cols),
+        (var(--avail-h) - (var(--grid-rows) + 1) * var(--gap))
+        / var(--grid-rows)
     );
 
     --screen: #05050f;
@@ -33,7 +68,28 @@
     --cyan: #00e5ff;
     --yellow: #ffee00;
 
-    font-family: "Press Start 2P", "Courier New", monospace;
+    /* The font in use. --ui scales the text, --glyph is the width of a digit
+       as a fraction of the font size (used to fit numbers in tiles). */
+    --font: "Press Start 2P", "Courier New", monospace;
+    --ui: 1;
+    --glyph: 1;
+
+    font-family: var(--font);
+    font-size: calc(100% * var(--ui));
+}
+
+:root[data-font="montserrat"]
+{
+    --font: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+    --glyph: 0.7;
+    --ui: 1.4;
+}
+
+:root[data-font="source-sans"]
+{
+    --font: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+    --glyph: 0.55;
+    --ui: 1.5;
 }
 
 *
@@ -117,12 +173,12 @@ aside
     margin-bottom: 10px;
 }
 
-#Total_score
+#total_score
 {
     background: #000;
     border: 4px solid var(--green);
     color: var(--green);
-    font: inherit;
+    display: block;
     font-size: 1.4rem;
     padding: 12px 8px;
     text-align: right;
@@ -133,6 +189,11 @@ aside
 {
     font-size: 0.6rem;
     line-height: 1.9;
+}
+
+.rules p
+{
+    margin: 0 0 1em;
 }
 
 .leaderboard ol
@@ -154,10 +215,14 @@ main
 .board
 {
     background: #000;
-    height: var(--board-size);
+    height: calc(
+        var(--grid-rows) * var(--cell) + (var(--grid-rows) + 1) * var(--gap)
+    );
     outline: 4px solid var(--green);
     position: relative;
-    width: var(--board-size);
+    width: calc(
+        var(--grid-cols) * var(--cell) + (var(--grid-cols) + 1) * var(--gap)
+    );
 }
 
 #slots,
@@ -194,8 +259,8 @@ main
         0 0 14px var(--tile);
     color: #000;
     display: grid;
-    /* Fits 4 digits at 0.2 of the cell; shrinks for longer values. */
-    font-size: calc(var(--cell) * 0.8 / var(--digits, 4));
+    /* Fits 4 digits in the tile; shrinks for longer values. */
+    font-size: calc(var(--cell) * 0.8 / (var(--digits, 4) * var(--glyph)));
     place-items: center;
     transition: translate var(--slide) ease-out;
 }
@@ -349,7 +414,8 @@ dialog::backdrop
     :root
     {
         --sidebar-width: 0px;
-        --board-size: min(100vw - 32px, 100vh - 32px);
+        --avail-w: calc(100vw - 32px);
+        --avail-h: calc(100vh - 32px);
     }
 
     body

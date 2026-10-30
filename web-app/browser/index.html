@@ -1,40 +1,47 @@
 <!doctype html>
 <html lang="en-gb">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>2048</title>
-<link rel="stylesheet" href="default.css">
-<link rel="icon" href="./assets/favicon.png">
-<script type="module" src="main.js"></script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>2048</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+    <script type="module" src="main.js"></script>
+</head>
+<body>
+    <header>
+        <h1 id="title">2048</h1>
+        <a href="/docs/">API Documentation</a>
+    </header>
 
-<header>
-    <h1 id="title">2048</h1>
-    <a href="/docs/">API Documentation</a>
-</header>
+    <aside>
+        <div class="score">
+            <label for="total_score">Score</label>
+            <output id="total_score" aria-live="polite">0</output>
+        </div>
+        <div class="rules">
+            <p>Use the arrow keys to slide the tiles. Matching tiles merge.
+            Make the <span id="win_tile"></span> tile to win!</p>
+            <p>Once a <span id="morph_from"></span> tile appears, tiles
+            may shift up or down a value every
+            <span id="morph_every"></span> moves.</p>
+        </div>
+        <div class="leaderboard">
+            <strong id="leaderboard_title">High scores</strong>
+            <ol id="leaderboard"></ol>
+        </div>
+    </aside>
 
-<aside>
-    <div class="score">
-        <label for="Total_score">Score</label>
-        <input id="Total_score" value="0" readonly>
-    </div>
-    <div class="rules">
-        Use the arrow keys to move the tiles in the board.
-        Try to create the 2048 tile!
-    </div>
-    <div class="leaderboard">
-        <strong>High Scores</strong>
-        <ol id="leaderboard"></ol>
-    </div>
-</aside>
+    <main tabindex="-1">
+        <div id="board" class="board">
+            <div id="slots"></div>
+            <div id="tiles"></div>
+        </div>
+    </main>
 
-<main tabindex="-1">
-    <div id="board" class="board">
-        <div id="slots"></div>
-        <div id="tiles"></div>
-    </div>
-</main>
-
-<dialog id="result_dialog" aria-labelledby="result_text">
-    <h2 id="result_text">Game over</h2>
-    <button id="new_game" class="button" type="button">New game</button>
-</dialog>
+    <dialog id="result_dialog" aria-labelledby="result_text">
+        <h2 id="result_text">Game over</h2>
+        <button id="new_game" class="button" type="button">New game</button>
+    </dialog>
+</body>
+</html>

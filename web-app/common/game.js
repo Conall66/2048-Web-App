@@ -1,5 +1,6 @@
 /**
- * 2048.js is a module to model and play "2048" and related games.
+ * game.js is a module to model and play "2048" and related games.
+ * It knows nothing about the browser: boards are plain arrays of rows.
  * @namespace Twenty_forty_eight
  * @author Conall Templeman
  * @version 2022
@@ -17,9 +18,9 @@ const Twenty_forty_eight = Object.create(null);
  */
 
 /**
- * A tile is a value that can exist in the grid
+ * A tile is a value that can exist in the grid: a power of two.
  * @memberof Twenty_forty_eight
- * @typedef {(2 | 4 | 8 | 16 | 32 | 64 | 128 | 256 | 512 | 1024 | 2048)} Tile
+ * @typedef {number} Tile
  */
 
 /**
@@ -29,80 +30,78 @@ const Twenty_forty_eight = Object.create(null);
  */
 
 /**
- * Create a new start board.
- * Tiles have been randomly generated into two of the slots,
- * with eother values of 2 or 4
- * Optionally with a specified width and height,
- * otherwise returns a standard 4 wide, 4 high board.
+ * The rules of the game, in one place. Change a value here to change the
+ * game everywhere (the browser reads these too).
  * @memberof Twenty_forty_eight
- * @function
- * @param {number} [width = 4] The width of the new board.
- * @param {number} [height = 4] The height of the new board.
+ * @typedef {Object} Rules
+ * @property {number} rows The default number of rows of a board.
+ * @property {number} cols The default number of columns of a board.
+ * @property {number} start_tiles How many tiles a new board starts with.
+ * @property {number[]} new_tile_values The values a new tile can take,
+ *   each equally likely.
+ * @property {number} win_tile The tile that wins the game.
+ * @property {number} morph_from Once a tile of this value or more exists,
+ *   tiles start to shift value.
+ * @property {number} morph_every After this many moves, tiles may shift value.
  */
-
-Twenty_forty_eight.start_board = function(rows, cols){
-    const empty_board = Twenty_forty_eight.empty_board(4, 4);
-    return generate_start_tiles(empty_board);
-};
 
 /**
- * A ply is one turn taken by one of the players.
- * Return a new board after a player shifts all the tiles in one direction.
+ * How one tile slides in a ply.
  * @memberof Twenty_forty_eight
- * @function
- * @param {Twenty_forty_eight.Tile} tile The token to be added to the board.
- * @param {number} direction The direction the player moves the tiles
- * @param {Twenty_forty_eight.Board} board The board state that the ply is made on.
- * @returns {(Twenty_forty_eight.Board | undefined)} If the ply was legal,
- *   return the new board, otherwise return `undefined`.
+ * @typedef {Object} Tile_move
+ * @property {number[]} from The [row, column] the tile starts at.
+ * @property {number[]} to The [row, column] the tile ends at.
+ * @property {boolean} merged Whether the tile merges with another there.
  */
-
-Twenty_forty_eight.make_ply = function(board, direction){
-    if (Twenty_forty_eight.game_ended(board) === true){
-        return undefined;
-    }
-    const moved = move_tiles(board, direction);
-    if (moved === undefined){
-        return board;
-    }
-    //updates list of free tiles after moving
-    return generate_tiles(moved.board);
-};
 
 /**
- * Returns if a game has ended,
- * either because a player has won or the board is full.
+ * A tile that shifted value.
  * @memberof Twenty_forty_eight
- * @function
- * @param {Twenty_forty_eight.Board} board The board to test.
- * @returns {boolean} Whether the game has ended.
+ * @typedef {Object} Tile_change
+ * @property {number[]} at The [row, column] of the tile.
+ * @property {number} from The value before the shift.
+ * @property {number} to The value after the shift.
  */
 
-Twenty_forty_eight.game_ended = function(board){
-    return (
-        Twenty_forty_eight.game_won(board) ||
-        ["left", "right", "up", "down"].every(
-            (direction) => move_tiles(board, direction) === undefined
-        )
-    );
-};
+/**
+ * @memberof Twenty_forty_eight
+ * @type {Twenty_forty_eight.Rules}
+ */
+Twenty_forty_eight.rules = Object.freeze({
+    "cols": 4,
+    "morph_every": 5,
+    "morph_from": 128,
+    "new_tile_values": Object.freeze([2, 4]),
+    "rows": 4,
+    "start_tiles": 2,
+    "win_tile": 2048
+});
+
+const rules = Twenty_forty_eight.rules;
+const smallest_tile = Math.min(...rules.new_tile_values);
+const directions = ["left", "right", "up", "down"];
 
 /**
  * Create a new empty board.
- * Optionally with a specified width and height,
- * otherwise returns a standard 4 wide, 4 high board.
+ * Optionally with a specified number of rows and columns,
+ * otherwise returns a board of the default size in `rules`.
  * @memberof Twenty_forty_eight
  * @function
- * @param {number} [width = 4] The width of the new board.
- * @param {number} [height = 4] The height of the new board.
+ * @param {number} [rows = rules.rows] The number of rows of the new board.
+ * @param {number} [cols = rules.cols] The number of columns of the new board.
+ * @returns {Twenty_forty_eight.Board} A board of only empty positions.
+ * @throws {RangeError} If rows or cols is not a positive whole number.
  */
-
-//hard coded at the moment so that it works
-//the game is written in such a way that, if different rows and cols,
-//are predefined, it will still work
-Twenty_forty_eight.empty_board = function(rows = 4, cols = 4){
-    return [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
-    //return R.repeat(R.repeat(0, cols), rows);
+Twenty_forty_eight.empty_board = function(rows = rules.rows, cols = rules.cols){
+    if (
+        !Number.isInteger(rows) || !Number.isInteger(cols) ||
+        rows < 1 || cols < 1
+    ){
+        throw new RangeError(
+            "A board needs a positive whole number of rows and columns"
+        );
+    }
+    return Array.from({"length": rows}, () => new Array(cols).fill(0));
 };
 
 //returns row, column arrays of free spaces
@@ -118,21 +117,9 @@ const free_tiles = function(board){
     return frees;
 };
 
-//returns arrays of filled tiles row, column pairs
-const filled_tiles = function(board){
-    let filled = [];
-    board.flatMap(function(rows, row_index){
-        rows.map(function(val, col_index){
-            if (val !== 0){
-                filled.push([row_index, col_index]);
-            }
-        });
-    });
-    return filled;
-};
-
 const random_tile_val = function(){
-    return (Math.round(Math.random()) + 1) * 2;
+    const values = rules.new_tile_values;
+    return values[Math.floor(Math.random() * values.length)];
 };
 
 const random_position = function(board){
@@ -141,6 +128,7 @@ const random_position = function(board){
     return frees[position];
 };
 
+//puts a new tile in a random free position; changes the board it is given
 const generate_tiles = function(board){
     const random_place = random_position(board);
     const tile_row = random_place[0];
@@ -149,33 +137,81 @@ const generate_tiles = function(board){
     return board;
 };
 
-//works
-const generate_start_tiles = function(board){
-    const board1 = generate_tiles(board);
-    const board2 = generate_tiles(board1);
-    return board2;
+/**
+ * Create a new start board.
+ * Tiles have been randomly generated into some of the positions
+ * (`rules.start_tiles` of them, or fewer on a tiny board).
+ * Optionally with a specified number of rows and columns,
+ * otherwise returns a board of the default size in `rules`.
+ * @memberof Twenty_forty_eight
+ * @function
+ * @param {number} [rows = rules.rows] The number of rows of the new board.
+ * @param {number} [cols = rules.cols] The number of columns of the new board.
+ * @returns {Twenty_forty_eight.Board} The new board.
+ * @throws {RangeError} If rows or cols is not a positive whole number.
+ */
+Twenty_forty_eight.start_board = function(rows = rules.rows, cols = rules.cols){
+    const empty_board = Twenty_forty_eight.empty_board(rows, cols);
+    const count = Math.min(rules.start_tiles, rows * cols);
+    return Array.from({"length": count}).reduce(generate_tiles, empty_board);
+};
+
+/**
+ * A ply is one turn taken by the player.
+ * Return a new board after the player shifts all the tiles in one direction,
+ * with a new tile added in a free position.
+ * @memberof Twenty_forty_eight
+ * @function
+ * @param {Twenty_forty_eight.Board} board The board state that the ply is made on.
+ * @param {string} direction The direction the player moves the tiles:
+ *   "left", "right", "up" or "down".
+ * @returns {(Twenty_forty_eight.Board | undefined)} The new board.
+ *   If no tile can move that way, the same board is returned.
+ *   If the game has already ended, `undefined` is returned.
+ */
+Twenty_forty_eight.make_ply = function(board, direction){
+    if (Twenty_forty_eight.game_ended(board) === true){
+        return undefined;
+    }
+    const moved = move_tiles(board, direction);
+    if (moved === undefined){
+        return board;
+    }
+    return generate_tiles(moved.board);
+};
+
+/**
+ * Returns if a game has ended,
+ * either because a player has won or because the board is full and no move
+ * is left to make. A full board is not ended while two neighbouring tiles
+ * can still merge.
+ * @memberof Twenty_forty_eight
+ * @function
+ * @param {Twenty_forty_eight.Board} board The board to test.
+ * @returns {boolean} Whether the game has ended.
+ */
+Twenty_forty_eight.game_ended = function(board){
+    return (
+        Twenty_forty_eight.game_won(board) ||
+        (
+            free_tiles(board).length === 0 &&
+            directions.every(
+                (direction) => move_tiles(board, direction) === undefined
+            )
+        )
+    );
 };
 
 /**
  * Returns if the board is in a winning state,
- * a board is winning if the 2048 tile exists in it
+ * a board is winning if the `rules.win_tile` tile exists in it.
  * @memberof Twenty_forty_eight
  * @function
- * @param {number} tile Which player to check has a win.
  * @param {Twenty_forty_eight.Board} board The board to check.
- * @returns {boolean} Returns if the board is in a winning state
- * for the specified player.
+ * @returns {boolean} Returns if the board is in a winning state.
  */
-
 Twenty_forty_eight.game_won = function(board){
-    return board.some(function(rows){
-        //if (R.includes(2048, rows)){
-        if (rows.includes(2048)){
-            return true;
-        } else {
-            return false;
-        }
-    });
+    return board.some((row) => row.includes(rules.win_tile));
 };
 
 const valid_move = function(board1, board2) {
@@ -267,8 +303,7 @@ const move_tiles = function(board, direction){
  * @function
  * @param {Twenty_forty_eight.Board} board The board the ply is made on.
  * @param {string} direction "left", "right", "up" or "down".
- * @returns {{from: number[], to: number[], merged: boolean}[]} One entry per
- *   tile: its [row, column] before and after, and whether it merges there.
+ * @returns {Twenty_forty_eight.Tile_move[]} One entry per tile.
  *   Empty if the ply would change nothing.
  */
 Twenty_forty_eight.tile_moves = function(board, direction){
@@ -279,13 +314,14 @@ Twenty_forty_eight.tile_moves = function(board, direction){
 /**
  * Randomly shifts tiles to the value one step above or below their own.
  * A tile of value v shifts with probability 1 / v, so low tiles change often
- * and the highest tile rarely. A tile never goes below 2 or above 2048.
+ * and the highest tile rarely. A tile never goes below the smallest new
+ * tile value or above `rules.win_tile`.
  * @memberof Twenty_forty_eight
  * @function
  * @param {Twenty_forty_eight.Board} board The board to shift tiles on.
  * @param {function} [random = Math.random] Returns a number in [0, 1).
  * @returns {{board: Twenty_forty_eight.Board,
- *   changes: {at: number[], from: number, to: number}[]}} A new board and
+ *   changes: Twenty_forty_eight.Tile_change[]}} A new board and
  *   the tiles that changed.
  */
 Twenty_forty_eight.mutate_tiles = function(board, random = Math.random){
@@ -295,8 +331,11 @@ Twenty_forty_eight.mutate_tiles = function(board, random = Math.random){
             return value;
         }
         const options = [value / 2, value * 2].filter(
-            (option) => option >= 2 && option <= 2048
+            (option) => option >= smallest_tile && option <= rules.win_tile
         );
+        if (options.length === 0){
+            return value;
+        }
         const to = options[Math.floor(random() * options.length)];
         changes.push({"at": [r, c], "from": value, "to": to});
         return to;
@@ -305,21 +344,14 @@ Twenty_forty_eight.mutate_tiles = function(board, random = Math.random){
 };
 
 /**
- * Returns the size of a board as an array of [width, height].
+ * Returns the size of a board as an array of [rows, columns].
  * @memberof Twenty_forty_eight
  * @function
  * @param {Twenty_forty_eight.Board} board The board to check the size of.
- * @returns {number[]} The width and height of the board, [width, height].
+ * @returns {number[]} The number of rows and columns, [rows, columns].
  */
 Twenty_forty_eight.board_size = function(board) {
     return [board.length, board[0].length];
 };
 
-Twenty_forty_eight.start_board();
-
 export default Object.freeze(Twenty_forty_eight);
-
-//writing without ramda
-//1. write a trasnpose function
-//2. write a reverse board function
-//3. write an includes function

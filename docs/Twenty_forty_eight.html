@@ -27,7 +27,7 @@
 
 <nav >
     
-    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Stats4.html">Stats4</a><ul class='methods'><li data-type='method'><a href="Stats4.html#.get_statistics">get_statistics</a></li><li data-type='method'><a href="Stats4.html#.record_game">record_game</a></li></ul></li><li><a href="Twenty_forty_eight.html">Twenty_forty_eight</a><ul class='methods'><li data-type='method'><a href="Twenty_forty_eight.html#.board_size">board_size</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.empty_board">empty_board</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.game_ended">game_ended</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.game_won">game_won</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.make_ply">make_ply</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.start_board">start_board</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Namespaces</h3><ul><li><a href="Twenty_forty_eight.html">Twenty_forty_eight</a><ul class='methods'><li data-type='method'><a href="Twenty_forty_eight.html#.board_size">board_size</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.empty_board">empty_board</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.game_ended">game_ended</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.game_won">game_won</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.make_ply">make_ply</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.mutate_tiles">mutate_tiles</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.start_board">start_board</a></li><li data-type='method'><a href="Twenty_forty_eight.html#.tile_moves">tile_moves</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -62,7 +62,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_2048.js.html">common/2048.js</a>, <a href="common_2048.js.html#line1">line 1</a>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line1">line 1</a>
     </li></ul></dd>
     
 
@@ -111,7 +111,8 @@
 
 
             
-                <div class="description usertext"><p>2048.js is a module to model and play &quot;2048&quot; and related games.</p></div>
+                <div class="description usertext"><p>game.js is a module to model and play &quot;2048&quot; and related games.
+It knows nothing about the browser: boards are plain arrays of rows.</p></div>
             
 
             
@@ -131,6 +132,79 @@
 
     
 
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id=".rules"><span class="type-signature">(static) </span>rules<span class="type-signature"> :<a href="Twenty_forty_eight.html#.Rules">Twenty_forty_eight.Rules</a></span></h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line70">line 70</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type"><a href="Twenty_forty_eight.html#.Rules">Twenty_forty_eight.Rules</a></span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+        
     
 
     
@@ -153,7 +227,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_2048.js.html">common/2048.js</a>, <a href="common_2048.js.html#line266">line 266</a>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line353">line 353</a>
     </li></ul></dd>
     
 
@@ -193,7 +267,7 @@
 
 
 <div class="description usertext">
-    <p>Returns the size of a board as an array of [width, height].</p>
+    <p>Returns the size of a board as an array of [rows, columns].</p>
 </div>
 
 
@@ -273,7 +347,7 @@
 
         
 <div class="param-desc">
-    <p>The width and height of the board, [width, height].</p>
+    <p>The number of rows and columns, [rows, columns].</p>
 </div>
 
 
@@ -299,7 +373,7 @@
 
     
 
-    <h4 class="name" id=".empty_board"><span class="type-signature">(static) </span>empty_board<span class="signature">(width<span class="signature-attributes">opt</span>, height<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".empty_board"><span class="type-signature">(static) </span>empty_board<span class="signature">(rows<span class="signature-attributes">opt</span>, cols<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Twenty_forty_eight.html#.Board">Twenty_forty_eight.Board</a>}</span></h4>
 
     
 
@@ -311,7 +385,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_2048.js.html">common/2048.js</a>, <a href="common_2048.js.html#line102">line 102</a>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line95">line 95</a>
     </li></ul></dd>
     
 
@@ -352,8 +426,8 @@
 
 <div class="description usertext">
     <p>Create a new empty board.
-Optionally with a specified width and height,
-otherwise returns a standard 4 wide, 4 high board.</p>
+Optionally with a specified number of rows and columns,
+otherwise returns a board of the default size in <code>rules</code>.</p>
 </div>
 
 
@@ -395,7 +469,7 @@ otherwise returns a standard 4 wide, 4 high board.</p>
 
         <tr>
             
-                <td class="name"><code>width</code></td>
+                <td class="name"><code>rows</code></td>
             
 
             <td class="type">
@@ -422,19 +496,19 @@ otherwise returns a standard 4 wide, 4 high board.</p>
             
                 <td class="default">
                 
-                    <code>4</code>
+                    <code>rules.rows</code>
                 
                 </td>
             
 
-            <td class="description last"><p>The width of the new board.</p></td>
+            <td class="description last"><p>The number of rows of the new board.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>height</code></td>
+                <td class="name"><code>cols</code></td>
             
 
             <td class="type">
@@ -461,12 +535,12 @@ otherwise returns a standard 4 wide, 4 high board.</p>
             
                 <td class="default">
                 
-                    <code>4</code>
+                    <code>rules.cols</code>
                 
                 </td>
             
 
-            <td class="description last"><p>The height of the new board.</p></td>
+            <td class="description last"><p>The number of columns of the new board.</p></td>
         </tr>
 
     
@@ -486,8 +560,59 @@ otherwise returns a standard 4 wide, 4 high board.</p>
 
 
 
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc usertext">
+        <p>If rows or cols is not a positive whole number.</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl class="param-type">
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">RangeError</span>
 
 
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A board of only empty positions.</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Twenty_forty_eight.html#.Board">Twenty_forty_eight.Board</a></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -508,7 +633,7 @@ otherwise returns a standard 4 wide, 4 high board.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_2048.js.html">common/2048.js</a>, <a href="common_2048.js.html#line82">line 82</a>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line193">line 193</a>
     </li></ul></dd>
     
 
@@ -549,7 +674,9 @@ otherwise returns a standard 4 wide, 4 high board.</p>
 
 <div class="description usertext">
     <p>Returns if a game has ended,
-either because a player has won or the board is full.</p>
+either because a player has won or because the board is full and no move
+is left to make. A full board is not ended while two neighbouring tiles
+can still merge.</p>
 </div>
 
 
@@ -655,7 +782,7 @@ either because a player has won or the board is full.</p>
 
     
 
-    <h4 class="name" id=".game_won"><span class="type-signature">(static) </span>game_won<span class="signature">(tile, board)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+    <h4 class="name" id=".game_won"><span class="type-signature">(static) </span>game_won<span class="signature">(board)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
 
     
 
@@ -667,7 +794,7 @@ either because a player has won or the board is full.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_2048.js.html">common/2048.js</a>, <a href="common_2048.js.html#line178">line 178</a>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line213">line 213</a>
     </li></ul></dd>
     
 
@@ -708,7 +835,7 @@ either because a player has won or the board is full.</p>
 
 <div class="description usertext">
     <p>Returns if the board is in a winning state,
-a board is winning if the 2048 tile exists in it</p>
+a board is winning if the <code>rules.win_tile</code> tile exists in it.</p>
 </div>
 
 
@@ -742,29 +869,6 @@ a board is winning if the 2048 tile exists in it</p>
     </thead>
 
     <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>tile</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Which player to check has a win.</p></td>
-        </tr>
-
     
 
         <tr>
@@ -811,8 +915,7 @@ a board is winning if the 2048 tile exists in it</p>
 
         
 <div class="param-desc">
-    <p>Returns if the board is in a winning state
-for the specified player.</p>
+    <p>Returns if the board is in a winning state.</p>
 </div>
 
 
@@ -838,7 +941,7 @@ for the specified player.</p>
 
     
 
-    <h4 class="name" id=".make_ply"><span class="type-signature">(static) </span>make_ply<span class="signature">(tile, direction, board)</span><span class="type-signature"> &rarr; {<a href="Twenty_forty_eight.html#.Board">Twenty_forty_eight.Board</a>|undefined}</span></h4>
+    <h4 class="name" id=".make_ply"><span class="type-signature">(static) </span>make_ply<span class="signature">(board, direction)</span><span class="type-signature"> &rarr; {<a href="Twenty_forty_eight.html#.Board">Twenty_forty_eight.Board</a>|undefined}</span></h4>
 
     
 
@@ -850,7 +953,7 @@ for the specified player.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_2048.js.html">common/2048.js</a>, <a href="common_2048.js.html#line60">line 60</a>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line172">line 172</a>
     </li></ul></dd>
     
 
@@ -890,8 +993,9 @@ for the specified player.</p>
 
 
 <div class="description usertext">
-    <p>A ply is one turn taken by one of the players.
-Return a new board after a player shifts all the tiles in one direction.</p>
+    <p>A ply is one turn taken by the player.
+Return a new board after the player shifts all the tiles in one direction,
+with a new tile added in a free position.</p>
 </div>
 
 
@@ -929,52 +1033,6 @@ Return a new board after a player shifts all the tiles in one direction.</p>
 
         <tr>
             
-                <td class="name"><code>tile</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Twenty_forty_eight.html#.Tile">Twenty_forty_eight.Tile</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The token to be added to the board.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>direction</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">number</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>The direction the player moves the tiles</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
                 <td class="name"><code>board</code></td>
             
 
@@ -992,6 +1050,30 @@ Return a new board after a player shifts all the tiles in one direction.</p>
             
 
             <td class="description last"><p>The board state that the ply is made on.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>direction</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The direction the player moves the tiles:
+&quot;left&quot;, &quot;right&quot;, &quot;up&quot; or &quot;down&quot;.</p></td>
         </tr>
 
     
@@ -1017,8 +1099,9 @@ Return a new board after a player shifts all the tiles in one direction.</p>
 
         
 <div class="param-desc">
-    <p>If the ply was legal,
-return the new board, otherwise return <code>undefined</code>.</p>
+    <p>The new board.
+If no tile can move that way, the same board is returned.
+If the game has already ended, <code>undefined</code> is returned.</p>
 </div>
 
 
@@ -1047,7 +1130,7 @@ return the new board, otherwise return <code>undefined</code>.</p>
 
     
 
-    <h4 class="name" id=".start_board"><span class="type-signature">(static) </span>start_board<span class="signature">(width<span class="signature-attributes">opt</span>, height<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span></h4>
+    <h4 class="name" id=".mutate_tiles"><span class="type-signature">(static) </span>mutate_tiles<span class="signature">(board, random<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {Object}</span></h4>
 
     
 
@@ -1059,7 +1142,7 @@ return the new board, otherwise return <code>undefined</code>.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_2048.js.html">common/2048.js</a>, <a href="common_2048.js.html#line43">line 43</a>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line327">line 327</a>
     </li></ul></dd>
     
 
@@ -1099,11 +1182,10 @@ return the new board, otherwise return <code>undefined</code>.</p>
 
 
 <div class="description usertext">
-    <p>Create a new start board.
-Tiles have been randomly generated into two of the slots,
-with eother values of 2 or 4
-Optionally with a specified width and height,
-otherwise returns a standard 4 wide, 4 high board.</p>
+    <p>Randomly shifts tiles to the value one step above or below their own.
+A tile of value v shifts with probability 1 / v, so low tiles change often
+and the highest tile rarely. A tile never goes below the smallest new
+tile value or above <code>rules.win_tile</code>.</p>
 </div>
 
 
@@ -1145,13 +1227,13 @@ otherwise returns a standard 4 wide, 4 high board.</p>
 
         <tr>
             
-                <td class="name"><code>width</code></td>
+                <td class="name"><code>board</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type"><a href="Twenty_forty_eight.html#.Board">Twenty_forty_eight.Board</a></span>
 
 
             
@@ -1159,8 +1241,6 @@ otherwise returns a standard 4 wide, 4 high board.</p>
 
             
                 <td class="attributes">
-                
-                    &lt;optional><br>
                 
 
                 
@@ -1172,25 +1252,23 @@ otherwise returns a standard 4 wide, 4 high board.</p>
             
                 <td class="default">
                 
-                    <code>4</code>
-                
                 </td>
             
 
-            <td class="description last"><p>The width of the new board.</p></td>
+            <td class="description last"><p>The board to shift tiles on.</p></td>
         </tr>
 
     
 
         <tr>
             
-                <td class="name"><code>height</code></td>
+                <td class="name"><code>random</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">number</span>
+<span class="param-type">function</span>
 
 
             
@@ -1211,12 +1289,12 @@ otherwise returns a standard 4 wide, 4 high board.</p>
             
                 <td class="default">
                 
-                    <code>4</code>
+                    <code>Math.random</code>
                 
                 </td>
             
 
-            <td class="description last"><p>The height of the new board.</p></td>
+            <td class="description last"><p>Returns a number in [0, 1).</p></td>
         </tr>
 
     
@@ -1238,6 +1316,461 @@ otherwise returns a standard 4 wide, 4 high board.</p>
 
 
 
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>A new board and
+the tiles that changed.</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Object</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".start_board"><span class="type-signature">(static) </span>start_board<span class="signature">(rows<span class="signature-attributes">opt</span>, cols<span class="signature-attributes">opt</span>)</span><span class="type-signature"> &rarr; {<a href="Twenty_forty_eight.html#.Board">Twenty_forty_eight.Board</a>}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line153">line 153</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Create a new start board.
+Tiles have been randomly generated into some of the positions
+(<code>rules.start_tiles</code> of them, or fewer on a tiny board).
+Optionally with a specified number of rows and columns,
+otherwise returns a board of the default size in <code>rules</code>.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+        <th>Default</th>
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>rows</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>rules.rows</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>The number of rows of the new board.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cols</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                    <code>rules.cols</code>
+                
+                </td>
+            
+
+            <td class="description last"><p>The number of columns of the new board.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Throws:</h5>
+
+        
+
+<dl>
+    <dt>
+        <div class="param-desc usertext">
+        <p>If rows or cols is not a positive whole number.</p>
+        </div>
+    </dt>
+    <dd></dd>
+    <dt>
+        <dl class="param-type">
+            <dt>
+                Type
+            </dt>
+            <dd>
+                
+<span class="param-type">RangeError</span>
+
+
+            </dd>
+        </dl>
+    </dt>
+    <dd></dd>
+</dl>
+
+
+    
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>The new board.</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Twenty_forty_eight.html#.Board">Twenty_forty_eight.Board</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".tile_moves"><span class="type-signature">(static) </span>tile_moves<span class="signature">(board, direction)</span><span class="type-signature"> &rarr; {Array.&lt;<a href="Twenty_forty_eight.html#.Tile_move">Twenty_forty_eight.Tile_move</a>>}</span></h4>
+
+    
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line309">line 309</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+<div class="description usertext">
+    <p>Describes how each tile slides in a ply, before the new tile appears.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>board</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Twenty_forty_eight.html#.Board">Twenty_forty_eight.Board</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The board the ply is made on.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>direction</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>&quot;left&quot;, &quot;right&quot;, &quot;up&quot; or &quot;down&quot;.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>One entry per tile.
+Empty if the ply would change nothing.</p>
+</div>
+
+
+
+<dl class="param-type">
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Array.&lt;<a href="Twenty_forty_eight.html#.Tile_move">Twenty_forty_eight.Tile_move</a>></span>
+
+
+    </dd>
+</dl>
+
+    
 
 
 
@@ -1260,7 +1793,7 @@ otherwise returns a standard 4 wide, 4 high board.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_2048.js.html">common/2048.js</a>, <a href="common_2048.js.html#line10">line 10</a>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line11">line 11</a>
     </li></ul></dd>
     
 
@@ -1325,6 +1858,272 @@ It is implemented as an array of rows (rather than columns) of values
 
             
                 
+<h4 class="name" id=".Rules">Rules</h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line32">line 32</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>rows</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The default number of rows of a board.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>cols</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The default number of columns of a board.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>start_tiles</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>How many tiles a new board starts with.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>new_tile_values</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The values a new tile can take,
+each equally likely.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>win_tile</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The tile that wins the game.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>morph_from</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Once a tile of this value or more exists,
+tiles start to shift value.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>morph_every</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>After this many moves, tiles may shift value.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<div class="description usertext">
+    <p>The rules of the game, in one place. Change a value here to change the
+game everywhere (the browser reads these too).</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+            
+                
 <h4 class="name" id=".Tile">Tile</h4>
 
 
@@ -1336,7 +2135,7 @@ It is implemented as an array of rows (rather than columns) of values
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_2048.js.html">common/2048.js</a>, <a href="common_2048.js.html#line19">line 19</a>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line20">line 20</a>
     </li></ul></dd>
     
 
@@ -1376,7 +2175,7 @@ It is implemented as an array of rows (rather than columns) of values
 
 
 <div class="description usertext">
-    <p>A tile is a value that can exist in the grid</p>
+    <p>A tile is a value that can exist in the grid: a power of two.</p>
 </div>
 
 
@@ -1385,37 +2184,349 @@ It is implemented as an array of rows (rather than columns) of values
     <ul>
         <li>
             
-<span class="param-type">2</span>
-|
+<span class="param-type">number</span>
 
-<span class="param-type">4</span>
-|
 
-<span class="param-type">8</span>
-|
+        </li>
+    </ul>
 
-<span class="param-type">16</span>
-|
 
-<span class="param-type">32</span>
-|
 
-<span class="param-type">64</span>
-|
 
-<span class="param-type">128</span>
-|
 
-<span class="param-type">256</span>
-|
 
-<span class="param-type">512</span>
-|
+            
+                
+<h4 class="name" id=".Tile_change">Tile_change</h4>
 
-<span class="param-type">1024</span>
-|
 
-<span class="param-type">2048</span>
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line57">line 57</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>at</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The [row, column] of the tile.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>from</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The value before the shift.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>to</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">number</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The value after the shift.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<div class="description usertext">
+    <p>A tile that shifted value.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
+
+
+        </li>
+    </ul>
+
+
+
+
+
+
+            
+                
+<h4 class="name" id=".Tile_move">Tile_move</h4>
+
+
+
+
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line48">line 48</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+    <h5 class="subsection-title">Properties:</h5>
+
+    
+
+<table class="props">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>from</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The [row, column] the tile starts at.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>to</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;number></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>The [row, column] the tile ends at.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>merged</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Whether the tile merges with another there.</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<div class="description usertext">
+    <p>How one tile slides in a ply.</p>
+</div>
+
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">Object</span>
 
 
         </li>
@@ -1439,7 +2550,7 @@ It is implemented as an array of rows (rather than columns) of values
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="common_2048.js.html">common/2048.js</a>, <a href="common_2048.js.html#line25">line 25</a>
+        <a href="game.js.html">game.js</a>, <a href="game.js.html#line26">line 26</a>
     </li></ul></dd>
     
 
@@ -1520,7 +2631,7 @@ It is implemented as an array of rows (rather than columns) of values
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.10</a> on Fri Jul 01 2022 03:03:33 GMT+0100 (British Summer Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.5</a> on Fri Oct 30 2026 23:22:07 GMT+0000 (Greenwich Mean Time) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

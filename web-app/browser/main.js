@@ -1,31 +1,48 @@
-import Twenty_forty_eight from "./common/2048.js";
+import Twenty_forty_eight from "./common/game.js";
+import Leaderboard from "./leaderboard.js";
 
-const board_rows = 4;
-const board_cols = 4;
-const leaderboard_key = "2048_leaderboard";
-const leaderboard_size = 5;
+const {rules} = Twenty_forty_eight;
+
+const max_board_size = 12;
+const tiers = 15; // colours defined for 2^1..2^15, then they cycle
 // Animation lengths. Key presses are ignored until they have all ended.
 const calm = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const slide_ms = calm ? 0 : 120;
 const pop_ms = calm ? 0 : 160;
 const morph_ms = calm ? 0 : 500;
-// Once a tile of morph_from exists, tiles may shift every morph_every moves.
-const morph_from = 128;
-const morph_every = 5;
 
-const score_box = document.getElementById("Total_score");
-const leaderboard_list = document.getElementById("leaderboard");
-const slot_layer = document.getElementById("slots");
-const tile_layer = document.getElementById("tiles");
-const result_dialog = document.getElementById("result_dialog");
-const result_text = document.getElementById("result_text");
-const new_game_button = document.getElementById("new_game");
+const by_id = (id) => document.getElementById(id);
 
-// ponytail: the stylesheet sizes the board as a square, so rows must equal cols.
-document.documentElement.style.setProperty("--grid-cols", board_cols);
-document.documentElement.style.setProperty("--slide", `${slide_ms}ms`);
-document.documentElement.style.setProperty("--pop", `${pop_ms}ms`);
-document.documentElement.style.setProperty("--morph", `${morph_ms}ms`);
+const score_box = by_id("total_score");
+const leaderboard_title = by_id("leaderboard_title");
+const leaderboard_list = by_id("leaderboard");
+const slot_layer = by_id("slots");
+const tile_layer = by_id("tiles");
+const result_dialog = by_id("result_dialog");
+const result_text = by_id("result_text");
+const new_game_button = by_id("new_game");
+
+// The board size comes from the address, e.g. ?rows=3&cols=5.
+const size_param = function(name, fallback){
+    const size = Number(new URLSearchParams(location.search).get(name));
+    return Number.isInteger(size) && size >= 1 && size <= max_board_size
+        ? size
+        : fallback;
+};
+const board_rows = size_param("rows", rules.rows);
+const board_cols = size_param("cols", rules.cols);
+
+const root = document.documentElement;
+root.style.setProperty("--grid-rows", board_rows);
+root.style.setProperty("--grid-cols", board_cols);
+root.style.setProperty("--slide", `${slide_ms}ms`);
+root.style.setProperty("--pop", `${pop_ms}ms`);
+root.style.setProperty("--morph", `${morph_ms}ms`);
+
+// The rules text quotes the numbers from the rules, so they cannot disagree.
+by_id("win_tile").textContent = rules.win_tile;
+by_id("morph_from").textContent = rules.morph_from;
+by_id("morph_every").textContent = rules.morph_every;
 
 const range = (n) => Array.from({"length": n}, (ignore, k) => k);
 
@@ -46,31 +63,13 @@ range(board_rows).forEach(function(row){
 // ponytail: score = sum of tiles; the engine does not track merge points.
 const score_of = (b) => b.flat().reduce((sum, tile) => sum + tile, 0);
 
-const load_scores = function(){
-    try {
-        return JSON.parse(localStorage.getItem(leaderboard_key)) || [];
-    } catch (ignore) {
-        return [];
-    }
-};
-
-const show_leaderboard = function(){
-    leaderboard_list.replaceChildren(...load_scores().map(function(s){
+const show_leaderboard = function(scores){
+    leaderboard_title.textContent = `High scores ${board_rows}×${board_cols}`;
+    leaderboard_list.replaceChildren(...scores.map(function(score){
         const li = document.createElement("li");
-        li.textContent = s;
+        li.textContent = score;
         return li;
     }));
-};
-
-const record_score = function(score){
-    const scores = load_scores().concat(score)
-        .sort((a, b) => b - a).slice(0, leaderboard_size);
-    try {
-        localStorage.setItem(leaderboard_key, JSON.stringify(scores));
-    } catch (ignore) {
-        // storage unavailable: leaderboard just does not persist
-    }
-    show_leaderboard();
 };
 
 let board;
@@ -79,12 +78,13 @@ let busy = false; // true while a move animates
 let move_count = 0;
 let reached_morph_from = false;
 
-const tiers = 15; // colours defined for 2^1..2^15, then they cycle
-function paint(tile, value) {
+// Colour comes from the tile's tier (2 is tier 1); size shrinks past 4 digits.
+const paint = function(tile, value){
     tile.dataset.tier = (Math.log2(value) - 1) % tiers + 1;
     tile.style.setProperty("--digits", Math.max(4, String(value).length));
     tile.textContent = value;
-}
+};
+
 const key = ([row, col]) => `${row},${col}`;
 
 const filled = (b) => b.flatMap((row, r) => row.flatMap(
@@ -108,7 +108,7 @@ const render = function(popped){
 };
 
 const start_game = function(){
-    board = Twenty_forty_eight.start_board(board_cols, board_rows);
+    board = Twenty_forty_eight.start_board(board_rows, board_cols);
     move_count = 0;
     reached_morph_from = false;
     busy = false;
@@ -126,7 +126,9 @@ const directions = {
 const conclude = function(){
     busy = false;
     if (Twenty_forty_eight.game_ended(board)) {
-        record_score(score_of(board));
+        show_leaderboard(
+            Leaderboard.record(score_of(board), board_rows, board_cols)
+        );
         result_text.textContent = (
             Twenty_forty_eight.game_won(board)
             ? "You win!"
@@ -146,7 +148,10 @@ const morph_tiles = function(){
         return;
     }
     const changed = mutated.changes.map(
-        (change) => ({"change": change, "tile": tiles_at[change.at[0]][change.at[1]]})
+        (change) => ({
+            "change": change,
+            "tile": tiles_at[change.at[0]][change.at[1]]
+        })
     );
     changed.forEach(function({tile}){
         tile.classList.remove("pop");
@@ -166,11 +171,12 @@ const finish_move = function(next, popped){
     move_count += 1;
     render(popped);
     reached_morph_from = (
-        reached_morph_from || board.flat().some((tile) => tile >= morph_from)
+        reached_morph_from ||
+        board.flat().some((tile) => tile >= rules.morph_from)
     );
     if (
         reached_morph_from &&
-        move_count % morph_every === 0 &&
+        move_count % rules.morph_every === 0 &&
         !Twenty_forty_eight.game_ended(board)
     ) {
         setTimeout(morph_tiles, pop_ms);
@@ -219,4 +225,4 @@ result_dialog.onclose = function(){
 };
 
 start_game();
-show_leaderboard();
+show_leaderboard(Leaderboard.scores(board_rows, board_cols));
