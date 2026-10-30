@@ -44,7 +44,7 @@ When a game ends, its score is saved to a top-5 leaderboard in the sidebar. Scor
 
 ### Fonts
 
-The game uses the retro **Press Start 2P** pixel font by default. The **Font** menu in the sidebar switches to **Montserrat** or **Source Sans**, and your choice is remembered. All fonts live in `web-app/browser/assets/fonts/` and are loaded by `style.css`.
+The game uses the retro **Press Start 2P** pixel font by default, but with **Montserrat** or **Source Sans** setup in the backend as well. All fonts live in `web-app/browser/assets/fonts/` and are loaded by `style.css`.
 
 ## Configuring the game
 
