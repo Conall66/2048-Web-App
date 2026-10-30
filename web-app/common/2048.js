@@ -61,13 +61,12 @@ Twenty_forty_eight.make_ply = function(board, direction){
     if (Twenty_forty_eight.game_ended(board) === true){
         return undefined;
     }
-    if (move_tiles(board, direction) === undefined){
+    const moved = move_tiles(board, direction);
+    if (moved === undefined){
         return board;
-    } else {
-        const new_board = move_tiles(board, direction);
-        //updates list of free tiles after moving
-        return generate_tiles(new_board);
     }
+    //updates list of free tiles after moving
+    return generate_tiles(moved.board);
 };
 
 /**
@@ -81,8 +80,10 @@ Twenty_forty_eight.make_ply = function(board, direction){
 
 Twenty_forty_eight.game_ended = function(board){
     return (
-        board_full(board) ||
-        Twenty_forty_eight.game_won(board)
+        Twenty_forty_eight.game_won(board) ||
+        ["left", "right", "up", "down"].every(
+            (direction) => move_tiles(board, direction) === undefined
+        )
     );
 };
 
@@ -155,15 +156,6 @@ const generate_start_tiles = function(board){
     return board2;
 };
 
-//works
-const board_full = function(board){
-    if (free_tiles(board).length === 0){
-        return true;
-    } else {
-        return false;
-    }
-};
-
 /**
  * Returns if the board is in a winning state,
  * a board is winning if the 2048 tile exists in it
@@ -186,35 +178,6 @@ Twenty_forty_eight.game_won = function(board){
     });
 };
 
-const strip_zeros = (board) => (board.map((row) => row.filter((n) => n !== 0)));
-
-//works
-const merge_tiles_left = function(board){
-    const board_no_zeros = strip_zeros(board);
-    board_no_zeros.forEach(function(rows, row_index){
-        rows.forEach(function(val, col_index){
-            if (val === rows[col_index - 1]){
-                rows[col_index - 1] = rows[col_index] + rows[col_index - 1];
-                rows[col_index] = 0;
-            }
-        });
-    });
-    return strip_zeros(board_no_zeros);
-};
-
-const moved_left = function(board){
-    const initial_length = board.length;
-    const merged_board = merge_tiles_left(board);
-    return merged_board.map((rows) => rows.concat(new Array(initial_length - rows.length).fill(0)));
-};
-
-const board_flip = function(board){
-    return board.map(function(rows){
-        //return R.reverse(rows);
-        return rows.reverse();
-    });
-};
-
 const valid_move = function(board1, board2) {
     if (board1.join() === board2.join()){
         return false;
@@ -223,37 +186,122 @@ const valid_move = function(board1, board2) {
     }
 };
 
-const transpose = (board) => board[0].map((_, colIndex) => board.map((row) => row[colIndex]));
+//Slides one line of values towards index 0. A tile merges at most once.
+//Returns the new line and where each original tile ends up in it.
+const slide_line = function(line){
+    const slid = [];
+    const moves = [];
+    line.forEach(function(value, from){
+        if (value === 0){
+            return;
+        }
+        const last = slid[slid.length - 1];
+        if (last !== undefined && last.value === value && !last.merged){
+            last.value *= 2;
+            last.merged = true;
+        } else {
+            slid.push({"value": value, "merged": false});
+        }
+        moves.push({"from": from, "to": slid.length - 1});
+    });
+    return {
+        "line": line.map((ignore, index) => (
+            slid[index] === undefined ? 0 : slid[index].value
+        )),
+        "moves": moves.map((move) => ({
+            "from": move.from,
+            "to": move.to,
+            "merged": slid[move.to].merged
+        }))
+    };
+};
 
+//Board position of index i along line l, counting from the side
+//that the tiles slide towards.
+const line_cell = {
+    "down": (l, i, length) => [length - 1 - i, l],
+    "left": (l, i) => [l, i],
+    "right": (l, i, length) => [l, length - 1 - i],
+    "up": (l, i) => [i, l]
+};
+
+//Returns the board after sliding and the moves of each tile,
+//or undefined if the slide would change nothing.
 const move_tiles = function(board, direction){
-    if (direction === "left"){
-        const left = moved_left(board);
-        if (valid_move(left, board) === true){
-            return left;
-        }
+    const cell = line_cell[direction];
+    if (cell === undefined){
+        return undefined;
     }
-    if (direction === "right"){
-        const flipped_once = board_flip(board);
-        const left_merged = moved_left(flipped_once);
-        const flipped_again = board_flip(left_merged);
-        if (valid_move(flipped_again, board) === true){
-            return flipped_again;
-        }
+    const horizontal = direction === "left" || direction === "right";
+    const line_count = horizontal ? board.length : board[0].length;
+    const length = horizontal ? board[0].length : board.length;
+    const new_board = board.map((row) => row.map(() => 0));
+    const moves = [];
+    for (let l = 0; l < line_count; l += 1){
+        const line = Array.from({"length": length}, function(ignore, i){
+            const [row, col] = cell(l, i, length);
+            return board[row][col];
+        });
+        const slid = slide_line(line);
+        slid.line.forEach(function(value, i){
+            const [row, col] = cell(l, i, length);
+            new_board[row][col] = value;
+        });
+        slid.moves.forEach(function(move){
+            moves.push({
+                "from": cell(l, move.from, length),
+                "merged": move.merged,
+                "to": cell(l, move.to, length)
+            });
+        });
     }
-    if (direction === "up"){
-        //const up = R.transpose(moved_left(R.transpose(board)));
-        const up = transpose(moved_left(transpose(board)));
-        if (valid_move(up, board) === true){
-            return up;
-        }
+    if (valid_move(new_board, board) === false){
+        return undefined;
     }
-    if (direction === "down"){
-        //const down = R.transpose(move_tiles(R.transpose(board), "right"));
-        const down = transpose(move_tiles(transpose(board), "right"));
-        if (valid_move(down, board) === true){
-            return down;
+    return {"board": new_board, "moves": moves};
+};
+
+/**
+ * Describes how each tile slides in a ply, before the new tile appears.
+ * @memberof Twenty_forty_eight
+ * @function
+ * @param {Twenty_forty_eight.Board} board The board the ply is made on.
+ * @param {string} direction "left", "right", "up" or "down".
+ * @returns {{from: number[], to: number[], merged: boolean}[]} One entry per
+ *   tile: its [row, column] before and after, and whether it merges there.
+ *   Empty if the ply would change nothing.
+ */
+Twenty_forty_eight.tile_moves = function(board, direction){
+    const moved = move_tiles(board, direction);
+    return moved === undefined ? [] : moved.moves;
+};
+
+/**
+ * Randomly shifts tiles to the value one step above or below their own.
+ * A tile of value v shifts with probability 1 / v, so low tiles change often
+ * and the highest tile rarely. A tile never goes below 2 or above 2048.
+ * @memberof Twenty_forty_eight
+ * @function
+ * @param {Twenty_forty_eight.Board} board The board to shift tiles on.
+ * @param {function} [random = Math.random] Returns a number in [0, 1).
+ * @returns {{board: Twenty_forty_eight.Board,
+ *   changes: {at: number[], from: number, to: number}[]}} A new board and
+ *   the tiles that changed.
+ */
+Twenty_forty_eight.mutate_tiles = function(board, random = Math.random){
+    const changes = [];
+    const new_board = board.map((row, r) => row.map(function(value, c){
+        if (value === 0 || random() >= 1 / value){
+            return value;
         }
-    }
+        const options = [value / 2, value * 2].filter(
+            (option) => option >= 2 && option <= 2048
+        );
+        const to = options[Math.floor(random() * options.length)];
+        changes.push({"at": [r, c], "from": value, "to": to});
+        return to;
+    }));
+    return {"board": new_board, "changes": changes};
 };
 
 /**

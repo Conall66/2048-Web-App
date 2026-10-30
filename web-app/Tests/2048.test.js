@@ -106,16 +106,27 @@ const throw_if_not_ended = function (ended_board) {
 };
 
 describe("Ended boards", function () {
-    it("A board with no free elements should be ended", function () {
+    it("A full board with no legal moves should be ended", function () {
         const ended_board = [
             [
-                [2, 2, 2, 2],
-                [2, 2, 2, 2],
-                [2, 2, 2, 2],
-                [2, 2, 2, 2]
+                [2, 4, 2, 4],
+                [4, 2, 4, 2],
+                [2, 4, 2, 4],
+                [4, 2, 4, 2]
             ]
         ];
         ended_board.forEach(throw_if_not_ended);
+    });
+    it("A full board with a legal move should not be ended", function () {
+        const board = [
+            [2, 2, 2, 2],
+            [2, 2, 2, 2],
+            [2, 2, 2, 2],
+            [2, 2, 2, 2]
+        ];
+        if (Twenty_forty_eight.game_ended(board)) {
+            throw new Error("A board with legal moves was reported as ended");
+        }
     });
     it(
         `A board with a 2048 tile present,
@@ -139,4 +150,36 @@ ${display_board(highest_val_present)}`
             }
         }
     );
+});
+describe("Mutating tiles", function () {
+    it("shifts tiles chosen by the probability 1 / value", function () {
+        const board = [
+            [2, 0, 0, 0],
+            [0, 128, 0, 0],
+            [0, 0, 0, 0],
+            [0, 0, 0, 2048]
+        ];
+        // A roll below 1 / 2048 shifts every tile, picking the lower option
+        // first, except that a 2 can only go up and a 2048 only down.
+        const result = Twenty_forty_eight.mutate_tiles(board, () => 0.0001);
+        if (
+            result.board[0][0] !== 4 ||
+            result.board[1][1] !== 64 ||
+            result.board[3][3] !== 1024
+        ) {
+            throw new Error("Tiles were not shifted as expected");
+        }
+        // A roll of 0.01 shifts the 2 but not the 128 (1/128 is below 0.01).
+        const partial = Twenty_forty_eight.mutate_tiles(board, () => 0.01);
+        if (partial.board[1][1] !== 128 || partial.board[0][0] !== 4) {
+            throw new Error("Shift probability is not inversely proportional");
+        }
+        const held = Twenty_forty_eight.mutate_tiles(board, () => 0.9);
+        if (held.changes.length !== 0) {
+            throw new Error("Tiles shifted when they should not have");
+        }
+        if (board[0][0] !== 2) {
+            throw new Error("The original board was changed");
+        }
+    });
 });
