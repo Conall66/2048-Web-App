@@ -112,3 +112,12 @@ npm run docs
 ```
 
 The docs are served at <http://localhost:8080/docs/> while the server runs.
+
+---
+
+# Example UI
+
+<img width="3004" height="1658" alt="image" src="https://github.com/user-attachments/assets/84dc468a-eb86-4b91-bab8-f573ec211459" />
+<img width="3012" height="1668" alt="image" src="https://github.com/user-attachments/assets/aed94839-60ca-4e6d-b2a2-0c70f1b5bade" />
+
+
